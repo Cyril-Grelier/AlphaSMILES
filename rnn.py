@@ -1,6 +1,7 @@
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
 import os
+from builtins import (str, open, range)
 from time import time
 
 import numpy as np
@@ -66,9 +67,9 @@ def preprocess_data(sen_space):
 
     val = ["\n"]
     for smile in all_smile:
-        for p in smile:
-            if p not in val:
-                val.append(p)
+        for a in smile:
+            if a not in val:
+                val.append(a)
 
     return val, all_smile
 

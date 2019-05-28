@@ -1,6 +1,7 @@
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
 import csv
+from builtins import (open, range, int)
 
 """
 Structure of a line :

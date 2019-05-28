@@ -16,11 +16,12 @@
 #
 # peter ertl & greg landrum, september 2013
 #
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
 import math
 import os.path as op
 import sys
+from builtins import (range)
 
 from rdkit import Chem
 from rdkit.Chem import rdMolDescriptors

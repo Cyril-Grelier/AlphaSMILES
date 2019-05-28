@@ -1,10 +1,11 @@
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
 import json
 import math
 import pickle
 import random
 import time
+from builtins import (str, open, range, int)
 
 import parameters as p
 from smiles import SMILES

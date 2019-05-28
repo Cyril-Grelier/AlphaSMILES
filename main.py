@@ -1,8 +1,9 @@
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
 import json
 import os
 import pickle
+from builtins import (str, open)
 
 import mcts
 import parameters as p
@@ -32,15 +33,15 @@ def load_data():
             s_txt.write(s)
             s_txt.write("\n")
     # Save the scores
-    logP = []
+    logp = []
     sa = []
     cy = []
     for d in data:
-        logP.append(data[d]["logp"])
+        logp.append(data[d]["logp"])
         sa.append(data[d]["sa"])
         cy.append(data[d]["cycle"])
     with open(p.f_logp, "w") as logp_f:
-        for lo in logP:
+        for lo in logp:
             logp_f.write(str(lo) + "\n")
 
     with open(p.f_sa_scores, "w") as s:
