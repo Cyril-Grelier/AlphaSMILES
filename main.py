@@ -4,6 +4,8 @@ import json
 import os
 import pickle
 from builtins import (str, open)
+import datetime
+import threading
 
 import mcts
 import parameters as p
@@ -13,8 +15,11 @@ from csv_to_dict import load_dict
 from node import Node
 
 
-# os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"   # see issue #152
-# os.environ["CUDA_VISIBLE_DEVICES"] = ""
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"   # see issue #152
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
+# from tensorflow.python.client import device_lib
+# print(device_lib.list_local_devices())
 
 
 def load_data():
@@ -101,6 +106,9 @@ def load_parameters_mcts():
     mcts.reset_score_visit(p.tree)
     mcts.load_scores()
     p.tree.print()
+    p.lock_update_data = threading.Lock()
+    p.lock_update_node = threading.Lock()
+    p.lock_sa_score = threading.Lock()
 
 
 if __name__ == "__main__":
@@ -109,12 +117,7 @@ if __name__ == "__main__":
     # prefix = ['c', '1', 'c', '2', 'c', '(', '=', 'O', ')', 'n', '(', 'C', ')', 'c', '(', '=', 'O', ')', 'c', '(', 'c',
     #           'c', '3', ')', 'c', '2', 'c', '4', 'c', '3', 'c', '2', 'c', 'c', 'c', 'c', 'c', '2', 's', 'c', '4', 'c',
     #           '1']
-
-    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
-    from tensorflow.python.client import device_lib
-
-    print(device_lib.list_local_devices())
-
+    print("Starting time : %s " % datetime.datetime.now())
     if p.load_data:
         load_data()
     else:
@@ -134,4 +137,6 @@ if __name__ == "__main__":
         print("Working with :")
         print("Vocabulary : %s" % str(p.vocabulary))
         print("Len(vocabulary) : %d" % len(p.vocabulary))
-        mcts.launch(nb_turn=500)
+        mcts.launch(nb_turn=100000)
+
+    print("Finishing time : %s " % datetime.datetime.now())

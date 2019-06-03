@@ -7,6 +7,8 @@ import random
 import time
 from builtins import (str, open, range, int)
 
+from joblib import Parallel, delayed
+
 import parameters as p
 from smiles import SMILES
 
@@ -25,19 +27,17 @@ def launch(nb_turn=1):
     node = p.tree
     i = 0
     while (i < nb_turn) and (not stop_next_turn()):
-        # pptree.print_tree(node.out_pptree())
         print("Turn %d" % i)
         node_to_expand = selection(node)
         print("Node to expand : " + str(node_to_expand))
         new_node = expansion(node_to_expand)
-        print("New node : " + str(new_node))
+        print("New nodes : " + str(new_node))
         new_smiles = simulation(new_node)
         print("new smiles : " + str(new_smiles))
         update(new_node, new_smiles)
         save_tree(node)
         save_data_and_info()
         i += 1
-    # pprint.pprint(p.data)
     print("MCTS worked during %d s" % int(time.time() - start))
     print("Found %d valid molecules (%d already tested) out of %d generated" % (
         p.tree_info[p.info_good], p.tree_info[p.info_alrd_tested],
@@ -92,31 +92,68 @@ def simulation(nodes):
     return all_new_smiles
 
 
-def update(new_nodes, new_smiles):
-    # prefix = ['c', '1', 'c', '2', 'c', '(', '=', 'O', ')', 'n', '(', 'C', ')', 'c', '(', '=', 'O', ')', 'c', '(', 'c',
-    #           'c', '3', ')', 'c', '2', 'c', '4', 'c', '3', 'c', '2', 'c', 'c', 'c', 'c', 'c', '2', 's', 'c', '4', 'c',
-    #           '1']
+def update_smiles(smiles):
+    already = False
+    if repr(smiles) in p.data.keys():
+        already = True
+        with p.lock_update_data:
+            p.tree_info[p.info_alrd_tested] += 1
+        smiles.properties = p.data[repr(smiles)]
+    else:
+        smiles.calculation_of_properties()
+        with p.lock_update_data:
+            p.data[repr(smiles)] = smiles.properties
+    if smiles.properties[p.s_valid]:
+        with p.lock_update_data:
+            p.tree_info[p.info_good] += 1
+    reward = p.scorer.reward(p.data[repr(smiles)], already)
+    with p.lock_update_node:
+        node = get_node_starting_with("".join(smiles.element))
+        print("Reward %s : %f on node %s" % (str(smiles), reward, repr(node)))
+        node.update(reward)
+
+
+def update_next(new_smiles):
     p.tree_info[p.info_created] += len(new_smiles)
     print("Update")
     print("%d smiles to process" % len(new_smiles))
-    for i, n in enumerate(new_nodes):
-        for j in range(2):
-            already = False
-            print("SMILES %d/%d" % (j + 2 * i, len(new_smiles)))
-            s = new_smiles[j + 2 * i]
-            # s.element = prefix + s.element
-            if repr(s) in p.data.keys():
-                already = True
-                p.tree_info[p.info_alrd_tested] += 1
-                s.properties = p.data[repr(s)]
-            else:
-                s.calcul_properties()
-                p.data[repr(s)] = s.properties
-            if s.properties[p.s_valid]:
-                p.tree_info[p.info_good] += 1
-            reward = p.scorer.reward(p.data[repr(s)], already)
-            print("Reward %s : %f" % (str(s), reward))
-            n.update(reward)
+    backend = 'threading'  # 'loky' 'threading' 'multiprocessing'
+    Parallel(n_jobs=p.n_jobs, backend=backend)(delayed(update_smiles)(s for s in new_smiles))
+
+
+def update(new_nodes, new_smiles):
+    p.tree_info[p.info_created] += len(new_smiles)
+    print("Update")
+    print("%d smiles to process" % len(new_smiles))
+
+    backend = 'threading'  # 'loky' 'threading' 'multiprocessing'
+
+    Parallel(n_jobs=p.n_jobs, backend=backend)(
+        delayed(update_node_with_smile)(n, new_smiles[j + 2 * i]) for i, n in enumerate(new_nodes) for j in range(2))
+
+    # for i, n in enumerate(new_nodes):
+    #     for j in range(2):
+    #         print("SMILES %d/%d" % (j + 2 * i + 1, len(new_smiles)))
+    #         update_node_with_smile(n, new_smiles[j + 2 * i])
+
+
+def update_node_with_smile(node, smiles):
+    already = False
+    if repr(smiles) in p.data.keys():
+        already = True
+        p.tree_info[p.info_alrd_tested] += 1
+        smiles.properties = p.data[repr(smiles)]
+    else:
+        smiles.calculation_of_properties()
+        with p.lock_update_data:
+            p.data[repr(smiles)] = smiles.properties
+    if smiles.properties[p.s_valid]:
+        p.tree_info[p.info_good] += 1
+    with p.lock_update_node:
+        reward = p.scorer.reward(p.data[repr(smiles)], already)
+        print("Reward %s : %f on node %s" % (str(smiles), reward, str(node)))
+        node.update(reward)
+        print("Reward done : %s" % str(node))
 
 
 def get_node_with_prefix(node, smiles):
@@ -192,20 +229,20 @@ def reset_score_visit(node):
             reset_score_visit(c)
 
 # if __name__ == "__main__":
-# Pour tester get_node_with_prefix
-# node = Node()
-# node.new_child(SMILES(['O']))
-# node.children[0].new_child(SMILES(node.children[0].smiles.element + ['N']))
-# node.children[0].new_child(SMILES(node.children[0].smiles.element + ['C']))
-# node.children[0].children[1].new_child(SMILES(node.children[0].children[1].smiles.element + ['c']))
-# node.children[0].children[1].new_child(SMILES(node.children[0].children[1].smiles.element + ['F']))
-# node.children[0].children[1].new_child(SMILES(node.children[0].children[1].smiles.element + ['D']))
-# node.children[0].new_child(SMILES(node.children[0].smiles.element + ['c']))
-# node.children[0].new_child(SMILES(node.children[0].smiles.element + ['F']))
-# node.new_child(SMILES(node.smiles.element + ['C']))
-# node.new_child(SMILES(node.smiles.element + ['N']))
-# node.new_child(SMILES(node.smiles.element + ['[NH]']))
-# pptree.print_tree(node.out_pptree())
-# prefix = get_node_with_prefix(node, SMILES(['O', 'C', 'F', 'G']))
-# pptree.print_tree(node.out_pptree())
-# pptree.print_tree(prefix.out_pptree())
+#     # to test get_node_with_prefix
+#     node = Node()
+#     node.new_child(SMILES(['O']))
+#     node.children[0].new_child(SMILES(node.children[0].smiles.element + ['N']))
+#     node.children[0].new_child(SMILES(node.children[0].smiles.element + ['C']))
+#     node.children[0].children[1].new_child(SMILES(node.children[0].children[1].smiles.element + ['c']))
+#     node.children[0].children[1].new_child(SMILES(node.children[0].children[1].smiles.element + ['F']))
+#     node.children[0].children[1].new_child(SMILES(node.children[0].children[1].smiles.element + ['D']))
+#     node.children[0].new_child(SMILES(node.children[0].smiles.element + ['c']))
+#     node.children[0].new_child(SMILES(node.children[0].smiles.element + ['F']))
+#     node.new_child(SMILES(node.smiles.element + ['C']))
+#     node.new_child(SMILES(node.smiles.element + ['N']))
+#     node.new_child(SMILES(node.smiles.element + ['[NH]']))
+#     pptree.print_tree(node.out_pptree())
+#     prefix = get_node_with_prefix(node, SMILES(['O', 'C', 'F', 'G']))
+#     pptree.print_tree(node.out_pptree())
+#     pptree.print_tree(prefix.out_pptree())

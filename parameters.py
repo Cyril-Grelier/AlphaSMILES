@@ -10,7 +10,10 @@ if you change the vocabulary update it here too
 load_data = False
 train_rnn = False
 run_mcts = True
-use_dft = False
+use_dft = True
+btx = True
+
+prefix = []
 
 # files names
 
@@ -28,9 +31,9 @@ f_rnn_weights = 'RNN_Model/model_weights.h5'
 f_rnn_logs = 'RNN_Model/logs'
 
 #       mcts
-f_node_pckl = 'MCTS/nodes.pckl'
-f_mcts_pckl = 'MCTS/tree.pckl'
-f_mcts_tree_pckl = 'MCTS/mcts_tree.pckl'
+f_node_pckl = 'generated/nodes.pckl'
+f_mcts_pckl = 'generated/tree.pckl'
+f_mcts_tree_pckl = 'generated/mcts_tree.pckl'
 f_stop_mcts = 'MCTS/stop_mcts'
 
 #       dft
@@ -67,6 +70,9 @@ tree = None
 tree_info = None
 data = None
 scorer = None
+lock_update_data = None
+lock_update_node = None
+lock_sa_score = None
 
 info_created = "nb_smiles_created"
 info_good = "nb_good_smiles"
@@ -98,3 +104,9 @@ s_cycle = "cycle"
 s_dft = "dft"
 s_id = "id"
 s_valid = "valid"
+
+# multithreading
+
+n_jobs = 1
+nb_core_dft = 4
+

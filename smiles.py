@@ -111,11 +111,15 @@ class SMILES:
     def terminal(self):
         return (self.element[-1] == '\n') if self.element else False
 
-    def calcul_properties(self):
+    def calculation_of_properties(self):
         """
         Calcul logp, sa score, cycle score, dft
         """
-        molecule = MolFromSmiles("".join(self.element[:-1]))
+        if p.btx:
+            smiles = p.prefix + self.element[:-1]
+        else:
+            smiles = self.element[:-1]
+        molecule = MolFromSmiles("".join(smiles))
         if not molecule:
             self.properties[p.s_valid] = False
             return
@@ -125,7 +129,8 @@ class SMILES:
         except Exception as e:
             print("!" * 100)
             print(e)
-        self.properties[p.s_sa] = sascorer.calculate_score(molecule)
+        with p.lock_sa_score:
+            self.properties[p.s_sa] = sascorer.calculate_score(molecule)
         cycle_list = nx.cycle_basis(nx.Graph(rdmolops.GetAdjacencyMatrix(molecule)))
         self.properties[p.s_cycle] = max([len(j) for j in cycle_list]) if cycle_list else 0
         self.properties[p.s_id] = p.tree_info[p.info_good]

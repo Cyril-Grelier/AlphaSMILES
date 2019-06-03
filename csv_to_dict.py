@@ -107,3 +107,13 @@ def convertion_nm_to_cm_m1(val):
 
     """
     return 10000000 / val
+
+
+if __name__ == '__main__':
+    atom_allowe = [16, 17]
+    char_not_allowe = ['5', '.', '6', '7', '8', '-', '[O]', '[N+]', '[O-]', '[C]', '[N]', '[c]', '[CH]', '[CH2]', '[PH]',
+                    '[S]', 'P', '[SH]', 'F', 'Br', '[As]', '[CH3]', '[OH]', '[Si]', 'B', '[SH2]', '[NH2]', '[Ge]', 'p',
+                    '[P]', '[SeH]', '[Se]', '[SiH2]', '[SiH]', 'C', 'N']
+    dat = load_dict(atom_allowed=atom_allowe, char_not_allowed=char_not_allowe)
+    from pprint import pprint
+    pprint(len(dat))

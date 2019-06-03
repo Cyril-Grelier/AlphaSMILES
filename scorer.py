@@ -47,7 +47,11 @@ class ScorerDFT(Scorer):
                 return -0.5
             score = 0
             for line in dft:
-                if 500 < line["nm"] < 1000:
+                if 300 <= line["nm"] < 400:
+                    score += line["f"] * 25
+                if 400 <= line["nm"] < 500:
+                    score += line["f"] * 50
+                if 500 <= line["nm"]:
                     score += line["f"] * 100
             return score
         else:

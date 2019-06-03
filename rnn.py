@@ -156,3 +156,15 @@ def create_rnn_model(smiles):
     print("Model saved")
 
     p.model.load_weights(p.f_rnn_weights)
+
+
+# if __name__ == "__main__":
+#     from sklearn.utils import resample
+#     from main import load_smiles
+#     load_smiles()
+#     boots = []
+#     for i in range(10):
+#         print(i)
+#         boots.append(resample(p.smiles, replace=False, n_samples=100000, random_state=i))
+
+

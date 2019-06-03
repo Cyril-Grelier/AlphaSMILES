@@ -6,3 +6,4 @@ conda install -c anaconda tensorflow-gpu
 conda install -c conda-forge keras
 conda install -c omnia cclib
 pip install pptree
+conda install -c anaconda joblib
