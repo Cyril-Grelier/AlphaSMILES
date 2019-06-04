@@ -99,6 +99,10 @@ def load_parameters_mcts():
         p.tree_info[p.info_alrd_tested] = 0
         p.data = dict()
         p.tree = Node()
+        if not os.path.isdir("generated"):
+            os.mkdir("generated")
+        if p.use_dft and not os.path.isdir("generated/dft"):
+            os.mkdir("generated/dft")
     if p.use_dft:
         p.scorer = scorer.ScorerDFT(alpha=1)
     else:
@@ -132,11 +136,14 @@ if __name__ == "__main__":
     if p.run_mcts:
         load_parameters_mcts()
 
+        if p.btx:
+            p.tree = mcts.get_node_starting_with("c1")
         print("Lenght data already tested : %d" % len(p.data))
 
         print("Working with :")
         print("Vocabulary : %s" % str(p.vocabulary))
         print("Len(vocabulary) : %d" % len(p.vocabulary))
-        mcts.launch(nb_turn=100000)
+        # mcts.launch(nb_turn=100000)
 
     print("Finishing time : %s " % datetime.datetime.now())
+

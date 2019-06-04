@@ -15,7 +15,7 @@ from smiles import SMILES
 
 def stop_next_turn():
     with open(p.f_stop_mcts) as f:
-        if f.read() == "stop":
+        if f.read() == "stop" or f.read() == "stop\n":
             print("MCTS stopped with signal 'stop' in %s file" % p.f_stop_mcts)
             return True
         return False
@@ -34,7 +34,7 @@ def launch(nb_turn=1):
         print("New nodes : " + str(new_node))
         new_smiles = simulation(new_node)
         print("new smiles : " + str(new_smiles))
-        update(new_node, new_smiles)
+        update(new_smiles)  # (new_node, new_smiles)
         save_tree(node)
         save_data_and_info()
         i += 1
@@ -103,9 +103,6 @@ def update_smiles(smiles):
         smiles.calculation_of_properties()
         with p.lock_update_data:
             p.data[repr(smiles)] = smiles.properties
-    if smiles.properties[p.s_valid]:
-        with p.lock_update_data:
-            p.tree_info[p.info_good] += 1
     reward = p.scorer.reward(p.data[repr(smiles)], already)
     with p.lock_update_node:
         node = get_node_starting_with("".join(smiles.element))
@@ -113,47 +110,47 @@ def update_smiles(smiles):
         node.update(reward)
 
 
-def update_next(new_smiles):
+def update(new_smiles):
     p.tree_info[p.info_created] += len(new_smiles)
     print("Update")
     print("%d smiles to process" % len(new_smiles))
     backend = 'threading'  # 'loky' 'threading' 'multiprocessing'
-    Parallel(n_jobs=p.n_jobs, backend=backend)(delayed(update_smiles)(s for s in new_smiles))
+    Parallel(n_jobs=p.n_jobs, backend=backend)(delayed(update_smiles)(s) for s in new_smiles)
 
 
-def update(new_nodes, new_smiles):
-    p.tree_info[p.info_created] += len(new_smiles)
-    print("Update")
-    print("%d smiles to process" % len(new_smiles))
-
-    backend = 'threading'  # 'loky' 'threading' 'multiprocessing'
-
-    Parallel(n_jobs=p.n_jobs, backend=backend)(
-        delayed(update_node_with_smile)(n, new_smiles[j + 2 * i]) for i, n in enumerate(new_nodes) for j in range(2))
-
-    # for i, n in enumerate(new_nodes):
-    #     for j in range(2):
-    #         print("SMILES %d/%d" % (j + 2 * i + 1, len(new_smiles)))
-    #         update_node_with_smile(n, new_smiles[j + 2 * i])
-
-
-def update_node_with_smile(node, smiles):
-    already = False
-    if repr(smiles) in p.data.keys():
-        already = True
-        p.tree_info[p.info_alrd_tested] += 1
-        smiles.properties = p.data[repr(smiles)]
-    else:
-        smiles.calculation_of_properties()
-        with p.lock_update_data:
-            p.data[repr(smiles)] = smiles.properties
-    if smiles.properties[p.s_valid]:
-        p.tree_info[p.info_good] += 1
-    with p.lock_update_node:
-        reward = p.scorer.reward(p.data[repr(smiles)], already)
-        print("Reward %s : %f on node %s" % (str(smiles), reward, str(node)))
-        node.update(reward)
-        print("Reward done : %s" % str(node))
+# def update(new_nodes, new_smiles):
+#     p.tree_info[p.info_created] += len(new_smiles)
+#     print("Update")
+#     print("%d smiles to process" % len(new_smiles))
+#
+#     backend = 'threading'  # 'loky' 'threading' 'multiprocessing'
+#
+#     Parallel(n_jobs=p.n_jobs, backend=backend)(
+#         delayed(update_node_with_smile)(n, new_smiles[j + 2 * i]) for i, n in enumerate(new_nodes) for j in range(2))
+#
+#     # for i, n in enumerate(new_nodes):
+#     #     for j in range(2):
+#     #         print("SMILES %d/%d" % (j + 2 * i + 1, len(new_smiles)))
+#     #         update_node_with_smile(n, new_smiles[j + 2 * i])
+#
+#
+# def update_node_with_smile(node, smiles):
+#     already = False
+#     if repr(smiles) in p.data.keys():
+#         already = True
+#         p.tree_info[p.info_alrd_tested] += 1
+#         smiles.properties = p.data[repr(smiles)]
+#     else:
+#         smiles.calculation_of_properties()
+#         with p.lock_update_data:
+#             p.data[repr(smiles)] = smiles.properties
+#     if smiles.properties[p.s_valid]:
+#         p.tree_info[p.info_good] += 1
+#     with p.lock_update_node:
+#         reward = p.scorer.reward(p.data[repr(smiles)], already)
+#         print("Reward %s : %f on node %s" % (str(smiles), reward, str(node)))
+#         node.update(reward)
+#         print("Reward done : %s" % str(node))
 
 
 def get_node_with_prefix(node, smiles):
@@ -201,8 +198,13 @@ def save_data_and_info():
 
 def get_node_starting_with(smiles):
     current_node = p.tree
-    s = smiles[1:-1]
-    while current_node.children:
+    s = smiles
+    if (smiles[-1] == "\n") or (smiles[-1] == "'"):
+        s = s[:-1]
+    if smiles[0] == "'":
+        s = s[1:]
+    i = 0
+    while current_node.children and not (repr(current_node.smiles)[1:-1] == s):
         children = current_node.children
         children.sort(key=lambda x: len(str(x.smiles)), reverse=True)
         for c in children:
@@ -217,7 +219,7 @@ def get_node_starting_with(smiles):
 def load_scores():
     print("Loading scores")
     for s in p.data.keys():
-        node = get_node_starting_with(s)
+        node = get_node_starting_with(s[1:])
         node.update(p.scorer.reward(p.data[s], False))
 
 

@@ -133,6 +133,8 @@ class SMILES:
             self.properties[p.s_sa] = sascorer.calculate_score(molecule)
         cycle_list = nx.cycle_basis(nx.Graph(rdmolops.GetAdjacencyMatrix(molecule)))
         self.properties[p.s_cycle] = max([len(j) for j in cycle_list]) if cycle_list else 0
+        with p.lock_update_data:
+            p.tree_info[p.info_good] += 1
         self.properties[p.s_id] = p.tree_info[p.info_good]
         if p.use_dft:
             self.properties[p.s_dft] = calcul_dft(self.properties[p.s_id], "".join(self.element[:-1]))
