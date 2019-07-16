@@ -1,0 +1,1 @@
+{"configuration_name": "rnn_2.1", "data_input": "all_smiles_unique", "tokens_allowed": ["\n", "&", "C", "O", "(", "=", ")", "c", "1", "N", "n", "2", "3", "4", "[nH]", "Cl", "S", "o", "#", "[NH]", "s"], "C#N allowed": false, "bootstrapping": 0, "nb_samples_rnn_bt": 300, "epochs": 300, "learning_rate": 0.001}

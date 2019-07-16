@@ -1,0 +1,1 @@
+{"configuration_name": "rnn_aromatic", "data_input": "all_emol", "tokens_allowed": ["\n", "&", "c", "1", "2", "(", ")", "n", "Cl", "3", "4", "s", "o"], "C#N allowed": true, "bootstrapping": 0, "nb_samples_rnn_bt": 300, "epochs": 300, "learning_rate": 0.001}
