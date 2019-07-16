@@ -1,9 +1,0 @@
-conda create -n p3 python=3  anaconda
-conda activate p3
-conda install -c openbabel openbabel
-conda install -c rdkit rdkit
-conda install -c anaconda tensorflow-gpu
-conda install -c conda-forge keras
-conda install -c omnia cclib
-pip install pptree
-conda install -c anaconda joblib
