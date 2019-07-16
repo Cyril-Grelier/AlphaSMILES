@@ -103,9 +103,3 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-dft.*
-generated/dft
-generated/data.json
-generated/info.json
-MCTS/mcts_tree.pckl
-openbabel*

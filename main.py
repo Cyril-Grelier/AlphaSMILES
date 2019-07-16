@@ -14,14 +14,6 @@ if no_gpu:
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
-# from rnn.rnn import test
-#
-# test()
-
-from rnn.rnn import load_model
-
-print(load_model('rnn_2.1'))
-
 if train_rnn:
     from rnn.rnn import create_rnn
     create_rnn('boot_2.1_200M')
