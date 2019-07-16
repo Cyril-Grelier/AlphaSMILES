@@ -35,3 +35,10 @@
     code/property
     code/scorer
     code/tools
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
