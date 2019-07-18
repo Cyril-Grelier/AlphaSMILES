@@ -264,6 +264,8 @@
     <span class="n">delete_file</span><span class="p">(</span><span class="n">n_mol</span><span class="p">)</span>
     <span class="n">delete_file</span><span class="p">(</span><span class="n">n_xyz</span><span class="p">)</span>
 
+    <span class="c1"># TODO pour BOINC</span>
+
     <span class="c1"># Create inp file for OPT</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">id_smiles</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_OPT.inp&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inp</span><span class="p">:</span>
         <span class="n">inp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;%Chk=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">id_smiles</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>

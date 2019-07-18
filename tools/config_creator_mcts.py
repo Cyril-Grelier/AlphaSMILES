@@ -7,16 +7,17 @@ This code help you to prepare the json file of configuration to train the rnn
 config = dict()
 
 # name of your configuration
-config['configuration_name'] = "generated"
+config['configuration_name'] = "test_data_base_dft"
 
 # rnn directory (the name of the rnn configuration)
-config['rnn_repertory'] = "rnn_test"
+config['rnn_repertory'] = "rnn_aromatic"
 
 # long prefix, the RNN and MCTS won't see it until the properties are calculated
 # use it if the prefix is really long (more than 15 tokens approximately)
-config['long_prefix'] = ['c', '1', 'c', '2', 'c', '(', '=', 'O', ')', 'n', '(', 'C', ')', 'c', '(', '=', 'O', ')',
-                         'c', '(', 'c', 'c', '3', ')', 'c', '2', 'c', '4', 'c', '3', 'c', '2', 'c', 'c', 'c', 'c',
-                         'c', '2', 's', 'c', '4', 'c', '1']
+config['long_prefix'] = []
+    # ['c', '1', 'c', '2', 'c', '(', '=', 'O', ')', 'n', '(', 'C', ')', 'c', '(', '=', 'O', ')',
+    #                      'c', '(', 'c', 'c', '3', ')', 'c', '2', 'c', '4', 'c', '3', 'c', '2', 'c', 'c', 'c', 'c',
+    #                      'c', '2', 's', 'c', '4', 'c', '1']
 
 # short prefix, use a string to represent the prefix and use it as the first node of the tree
 # represent the prefix like this : ['c', '1']
@@ -30,7 +31,7 @@ config['nb_turn'] = 200
 
 config['exploration_vs_exploitation'] = 1
 
-config['expansion'] = "proba"
+config['expansion'] = "all"
 config['proba_min'] = 0.0001
 
 # multitasking
@@ -43,8 +44,11 @@ config['properties'] = [("mcts.properties.properties", "SAScoreProperty2DDecorat
                         ("mcts.properties.properties", "DFTPropertyDecorator"),
                         ]
 
-config['scorer'] = ("mcts.scorer.scorer", 'ScorerValidSMILES')
+config['scorer'] = ("mcts.scorer.scorer", 'ScorerDFT')
 config['alpha_scorer'] = 1
+
+# Name of the general data base (in the folder *data_out/*)
+config["data_base"] = "3-21G"
 
 with open('../mcts/configurations/' + config['configuration_name'] + '.json', 'w') as conf:
     json.dump(config, conf)

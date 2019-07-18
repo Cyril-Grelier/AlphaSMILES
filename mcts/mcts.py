@@ -6,10 +6,10 @@ import signal
 import time
 import os
 import threading
-
 from joblib import Parallel, delayed
 
 from mcts import parameters as p
+from mcts import data_base
 from mcts.smiles import SMILES
 from mcts.node import Node
 from rnn.rnn import load_model
@@ -79,6 +79,8 @@ def load_parameters_mcts(config):
     with open('rnn_models/' + p.config['rnn_repertory'] + "/config.json") as info_rnn:
         p.tokens = json.load(info_rnn)['tokens']
 
+    data_base.load_data_base()
+
     reset_score_visit(p.tree)
     p.scorer = getattr(__import__(p.config['scorer'][0], fromlist=[p.config['scorer'][1]]), p.config['scorer'][1])(
         p.config['alpha_scorer'])
@@ -122,10 +124,11 @@ def stop_next_turn():
     :return: None
     """
     with open(p.f_stop) as f:
-        if f.read() == "stop" or f.read() == "stop\n":
-            print("MCTS stopped with signal 'stop' in '%s' file" % p.f_stop)
-            return True
-        return False
+        stop = f.read()
+    if "stop" in stop:
+        print("MCTS stopped with signal 'stop' in '%s' file" % p.f_stop)
+        return True
+    return False
 
 
 def launch():
@@ -145,7 +148,8 @@ def launch():
     node.echo()
     signal_handler()
     prefix = SMILES(p.config['prefix'])
-    while (p.turn < p.config["nb_turn"]) and (not stop_next_turn()) and not p.stop:
+    nb_turn = p.turn + p.config["nb_turn"]
+    while (p.turn < nb_turn) and (not stop_next_turn()) and not p.stop:
         last_good = p.tree_info[p.info_good]
         last_bad = p.tree_info[p.info_bad]
         last_already = p.tree_info[p.info_alrd_tested]
@@ -164,6 +168,7 @@ def launch():
         update(new_smiles)  # (new_node, new_smiles)
         save_tree(node)
         save_data_and_info()
+        data_base.save_data_base()
 
         print("Found %d valid SMILES, %d bad SMILES, %d already tested out of %d generated" % (
             p.tree_info[p.info_good], p.tree_info[p.info_bad], p.tree_info[p.info_alrd_tested],
@@ -233,7 +238,7 @@ def selection(node):
     :param node: the root node to start the search
     :return: the node selected
     """
-    while not node.children:
+    while node.children:
         node = ubc(node)
     return node
 
@@ -295,13 +300,20 @@ def update_smiles(smiles):
     :return: None
     """
     already = False
+    full_smiles = "".join(p.config['long_prefix']) + "".join(smiles.element)
+    properties = data_base.select(full_smiles)
+
     if repr(smiles) in p.data.keys():
         already = True
         with p.lock_update_data:
             p.tree_info[p.info_alrd_tested] += 1
         smiles.properties = p.data[repr(smiles)]
     else:
-        smiles.calculation_of_properties()
+        if not properties:
+            smiles.calculation_of_properties()
+            data_base.create(full_smiles, smiles.properties)
+        else:
+            smiles.properties = properties
         with p.lock_update_data:
             p.data[repr(smiles)] = smiles.properties
     reward = p.scorer.reward(smiles=p.data[repr(smiles)], already=already)
@@ -419,7 +431,7 @@ def get_node_starting_with(smiles):
     Find the node in the tree where the SMILES come from
 
     :param smiles: SMILES to look for
-    :type smiles: list of str
+    :type smiles: str
     :return: parent node of the SMILES
     """
     current_node = p.tree
@@ -449,7 +461,10 @@ def load_scores():
     length_data = len(p.data.keys())
     for i, s in enumerate(p.data.keys()):
         print("\r%d/%d %s" % (i+1, length_data, s), end=' '*(90-len(s)))
-        if s[0] != "_":
+        if len(s) > 0 and s[0] != "_":
+            node = get_node_starting_with(s)
+            node.update(p.scorer.reward(p.data[s], False))
+        elif len(s) == 0:
             node = get_node_starting_with(s)
             node.update(p.scorer.reward(p.data[s], False))
     print()

@@ -1,6 +1,6 @@
 no_gpu = True
-train_rnn = True
-launch_mcts = False
+train_rnn = False
+launch_mcts = True
 no_warning = True
 
 if no_warning:
@@ -20,5 +20,5 @@ if train_rnn:
 
 if launch_mcts:
     from mcts.mcts import load_parameters_mcts, launch
-    load_parameters_mcts('mcts_test')
+    load_parameters_mcts('test_data_base_dft')
     launch()

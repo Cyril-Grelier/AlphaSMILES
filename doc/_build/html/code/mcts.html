@@ -106,6 +106,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#id1">2.1. MCTS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-mcts.node">2.2. Node</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-mcts.smiles">2.3. SMILES</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-mcts.data_base">2.4. Data base</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="property.html">3. Property</a></li>
@@ -204,7 +205,7 @@ Add as much children as the function next_atoms of the current SMILES give</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>smiles</strong> (<em>list of str</em>) – SMILES to look for</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>smiles</strong> (<em>str</em>) – SMILES to look for</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">parent node of the SMILES</td>
 </tr>
@@ -754,6 +755,111 @@ SMILES are selected is their probability is greater than 0.0001% according to th
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>list_of_mol</strong> (<em>list of str</em>) – list of tokens</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of indices of the tokens</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-mcts.data_base">
+<span id="data-base"></span><h2>2.4. Data base<a class="headerlink" href="#module-mcts.data_base" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mcts.data_base.create">
+<code class="descclassname">mcts.data_base.</code><code class="descname">create</code><span class="sig-paren">(</span><em>smiles</em>, <em>properties</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mcts/data_base.html#create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mcts.data_base.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new SMILES in the data base if it doesn’t already exist.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>smiles</strong> (<em>str</em>) – the SMILES to create</li>
+<li><strong>properties</strong> (<em>set</em>) – The properties of the SMILES</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True if the creation end up well, False otherwise</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="mcts.data_base.delete">
+<code class="descclassname">mcts.data_base.</code><code class="descname">delete</code><span class="sig-paren">(</span><em>smiles</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mcts/data_base.html#delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mcts.data_base.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete the SMILES from the data base</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>smiles</strong> (<em>str</em>) – the SMILES to delete</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the properties of the SMILES if the deletion end up well, None otherwise</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="mcts.data_base.load_data_base">
+<code class="descclassname">mcts.data_base.</code><code class="descname">load_data_base</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mcts/data_base.html#load_data_base"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mcts.data_base.load_data_base" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare the data_base</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="mcts.data_base.save_data_base">
+<code class="descclassname">mcts.data_base.</code><code class="descname">save_data_base</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mcts/data_base.html#save_data_base"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mcts.data_base.save_data_base" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the data base in the “p.config[“data_base”].json” file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="mcts.data_base.select">
+<code class="descclassname">mcts.data_base.</code><code class="descname">select</code><span class="sig-paren">(</span><em>smiles</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mcts/data_base.html#select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mcts.data_base.select" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select a SMILES from the data base, return None if the SMILES is not in the data base.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>smiles</strong> (<em>str</em>) – SMILES to look for in the data base</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None or SMILES</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="mcts.data_base.update">
+<code class="descclassname">mcts.data_base.</code><code class="descname">update</code><span class="sig-paren">(</span><em>smiles</em>, <em>properties</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mcts/data_base.html#update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mcts.data_base.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a SMILES with properties given in parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>smiles</strong> (<em>str</em>) – the SMILES to update</li>
+<li><strong>properties</strong> (<em>set</em>) – The new properties</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True if the update end up well, False otherwise</p>
+</td>
 </tr>
 </tbody>
 </table>

@@ -21,6 +21,8 @@ scorer = None
 lock_update_data = None
 lock_update_node = None
 lock_sa_score = None
+data_base = None
+lock_access_data_base = None
 
 info_created = "nb_smiles_created"
 info_good = "nb_good_smiles"

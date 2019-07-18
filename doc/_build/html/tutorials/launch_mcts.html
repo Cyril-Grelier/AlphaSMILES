@@ -105,6 +105,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#n-jobs-and-nb-core-dft">3.1.9. n_jobs and nb_core_dft</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#properties">3.1.10. properties</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#scorer-and-alpha-scorer">3.1.11. scorer and alpha_scorer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data-base">3.1.12. data_base</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#launch-the-mcts">3.2. Launch the MCTS</a></li>
@@ -300,6 +301,13 @@
 <p>See <a class="reference external" href="create_your_scorer.html">create your scorer</a> to learn how to create a new scorer.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;scorer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;mcts.scorer.scorer&quot;</span><span class="p">,</span> <span class="s1">&#39;ScorerValidSMILES&#39;</span><span class="p">)</span>
 <span class="n">config</span><span class="p">[</span><span class="s1">&#39;alpha_scorer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="data-base">
+<h3>3.1.12. data_base<a class="headerlink" href="#data-base" title="Permalink to this headline">¶</a></h3>
+<p>This is the name of the data base with the results of all generated molecules located in the folder <em>‘data_out/’</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;data_base&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;3-21G&quot;</span>
 </pre></div>
 </div>
 </div>

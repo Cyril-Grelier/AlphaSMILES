@@ -155,6 +155,14 @@ See `create your scorer <create_your_scorer.html>`_ to learn how to create a new
     config['scorer'] = ("mcts.scorer.scorer", 'ScorerValidSMILES')
     config['alpha_scorer'] = 1
 
+data_base
+:::::::::
+
+This is the name of the data base with the results of all generated molecules located in the folder *'data_out/'*
+
+.. code-block:: python
+
+    config["data_base"] = "3-21G"
 
 Launch the MCTS
 ---------------
