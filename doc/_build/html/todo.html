@@ -86,7 +86,12 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="about.html">About this project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="requirements.html">Requirements</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">TODO</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">TODO</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#parser">Parser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#asynchronous-task-and-boinc">asynchronous task and Boinc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption"><span class="caption-text">Tutorial</span></p>
 <ul>
@@ -172,6 +177,8 @@
             
   <div class="section" id="todo">
 <h1>TODO<a class="headerlink" href="#todo" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="parser">
+<h2>Parser<a class="headerlink" href="#parser" title="Permalink to this headline">¶</a></h2>
 <p>Code a parser to separate tokens in SMILES</p>
 <p>Links:</p>
 <p><a class="reference external" href="http://www.dalkescientific.com/writings/diary/archive/2007/06/25/smiles_states.html">http://www.dalkescientific.com/writings/diary/archive/2007/06/25/smiles_states.html</a></p>
@@ -185,6 +192,22 @@
 <p><a class="reference external" href="https://github.com/tsudalab/ChemGE/blob/master/zinc_grammar.py">https://github.com/tsudalab/ChemGE/blob/master/zinc_grammar.py</a></p>
 <p><a class="reference external" href="https://github.com/rdkit/rdkit">https://github.com/rdkit/rdkit</a></p>
 <p><a class="reference external" href="http://opensmiles.org/spec/open-smiles-2-grammar.html">http://opensmiles.org/spec/open-smiles-2-grammar.html</a></p>
+</div>
+<div class="section" id="asynchronous-task-and-boinc">
+<h2>asynchronous task and Boinc<a class="headerlink" href="#asynchronous-task-and-boinc" title="Permalink to this headline">¶</a></h2>
+<p>Adding the possibility to realise asynchronous task to use Boinc. See in the file <em>‘mcts/properties/dft.py’</em> to generate the <em>.inp</em> file to send to boinc.
+After generation, you have to send the <em>.inp</em> file to boinc then  adding the SMILES to a data base of “SMILES on boinc” to check if they are ready.</p>
+<p>A better way would be hidding the use of Boinc to AlphaSMILES by using an API to calculate the properties of a SMILES.</p>
+<p>see the <a class="reference external" href="https://quchempedia.univ-angers.fr/boinc/docs/index.html">boinc doc</a>.</p>
+</div>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<p>Building an API to ask the calculations of properties for a SMILES (or RDKit Mol) would be very interesting and reusable.</p>
+<p>When using AlphaSMILES or any other machine learning/generator/code that give you SMILES, you can send the SMILES (or RDKit Mol) to the API
+with a list of properties you need, if there is DFT calculations, ask for which degree of theory you need. Eventually a kind of score or a function to use for scoring.</p>
+<p>The API check in the data base if the properties have already been calculated. If yes, the results are returned to the program (score or properties)
+otherwise, the API can decide if the calculation can be launch on Boinc or on a server directly.</p>
+</div>
 </div>
 
 

@@ -95,8 +95,69 @@ def calcul_dft(id_smiles, smiles, m):
     delete_file(n_mol)
     delete_file(n_xyz)
 
+    """
+    TODO
+    Code to use for GAUSSIAN
+    I don't understand why but I get an 
+    TypeError: slice indices must be integers or None or have an __index__ method
+    
+    while trying to open the log file with cclib...
+    data = cclib.io.ccread(n_log)
+    """
+
+#     n_log = str(id_smiles) + "_DFT.log"
+#     inp_file = """%Chk={id_smiles}_DFT
+# %NProcShared={nb_core_dft}
+# %mem=1200MB
+# #P B3LYP/3-21G* opt gfprint pop=(full,HirshfeldEE)
+#
+# {id_smiles}_DFT
+#
+# 0 1
+# {position}
+#
+#
+# --Link1--
+# %Chk={id_smiles}_DFT
+# %NProcShared={nb_core_dft}
+# %mem=1200MB
+# #p B3LYP chkbasis guess=read geom=allcheck TD=(nstates=20) Gfprint
+#
+#
+#
+# """.format(id_smiles=id_smiles, nb_core_dft=p.config["nb_core_dft"], position=position)
+#
+#     n_inp = str(id_smiles) + "_DFT.inp"
+#
+#     with open(n_inp, "w") as inp:
+#         inp.write(inp_file)
+#
+#     command_opt = "./mcts/properties/dft.sh " + n_inp
+#     start = time.time()
+#     os.system(command_opt)
+#     stop = time.time()
+#     print("Execution time DFT: " + repr(int(stop - start)) + "s")
+#
+#     with open(n_log, "r") as log:
+#         last_line = log.readlines()[-1]
+#
+#     if "Normal termination" in last_line:
+#         with open(n_log, "r") as log:
+#             data = cclib.io.ccread(n_log)
+#             i = 0
+#             for line in log:
+#                 if "Excited State" in line:
+#                     val = line.split()[4:-1]
+#                     dft.append(dict({"ev": float(val[0]),
+#                                      "nm": float(val[2]),
+#                                      "cm-1": float(data.etenergies[i]),
+#                                      "f": float(val[-1].split("=")[1])}))
+#                     i += 1
+#
+#     delete_file(n_inp)
+
     # Create inp file for OPT
-    with open(str(id_smiles) + "_OPT.inp", "w") as inp:
+    with open(n_opt, "w") as inp:
         inp.write("%Chk=" + str(id_smiles) + "\n")
         inp.write("%NProcShared=" + str(p.config["nb_core_dft"]) + "\n")
         inp.write("%mem=1200MB\n")
@@ -154,10 +215,10 @@ def calcul_dft(id_smiles, smiles, m):
                                          "cm-1": float(data.etenergies[i]),
                                          "f": float(val[-1].split("=")[1])}))
                         i += 1
-
-    delete_file(str(id_smiles) + ".chk")
-
     compress_file(n_opt_log)
     compress_file(n_td_log)
 
+    delete_file(str(id_smiles) + ".chk")
+
     return dft
+

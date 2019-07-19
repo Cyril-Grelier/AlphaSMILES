@@ -264,10 +264,69 @@
     <span class="n">delete_file</span><span class="p">(</span><span class="n">n_mol</span><span class="p">)</span>
     <span class="n">delete_file</span><span class="p">(</span><span class="n">n_xyz</span><span class="p">)</span>
 
-    <span class="c1"># TODO pour BOINC</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TODO</span>
+<span class="sd">    Code to use for GAUSSIAN</span>
+<span class="sd">    I don&#39;t understand why but I get an </span>
+<span class="sd">    TypeError: slice indices must be integers or None or have an __index__ method</span>
+<span class="sd">    </span>
+<span class="sd">    while trying to open the log file with cclib...</span>
+<span class="sd">    data = cclib.io.ccread(n_log)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<span class="c1">#     n_log = str(id_smiles) + &quot;_DFT.log&quot;</span>
+<span class="c1">#     inp_file = &quot;&quot;&quot;%Chk={id_smiles}_DFT</span>
+<span class="c1"># %NProcShared={nb_core_dft}</span>
+<span class="c1"># %mem=1200MB</span>
+<span class="c1"># #P B3LYP/3-21G* opt gfprint pop=(full,HirshfeldEE)</span>
+<span class="c1">#</span>
+<span class="c1"># {id_smiles}_DFT</span>
+<span class="c1">#</span>
+<span class="c1"># 0 1</span>
+<span class="c1"># {position}</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># --Link1--</span>
+<span class="c1"># %Chk={id_smiles}_DFT</span>
+<span class="c1"># %NProcShared={nb_core_dft}</span>
+<span class="c1"># %mem=1200MB</span>
+<span class="c1"># #p B3LYP chkbasis guess=read geom=allcheck TD=(nstates=20) Gfprint</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># &quot;&quot;&quot;.format(id_smiles=id_smiles, nb_core_dft=p.config[&quot;nb_core_dft&quot;], position=position)</span>
+<span class="c1">#</span>
+<span class="c1">#     n_inp = str(id_smiles) + &quot;_DFT.inp&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#     with open(n_inp, &quot;w&quot;) as inp:</span>
+<span class="c1">#         inp.write(inp_file)</span>
+<span class="c1">#</span>
+<span class="c1">#     command_opt = &quot;./mcts/properties/dft.sh &quot; + n_inp</span>
+<span class="c1">#     start = time.time()</span>
+<span class="c1">#     os.system(command_opt)</span>
+<span class="c1">#     stop = time.time()</span>
+<span class="c1">#     print(&quot;Execution time DFT: &quot; + repr(int(stop - start)) + &quot;s&quot;)</span>
+<span class="c1">#</span>
+<span class="c1">#     with open(n_log, &quot;r&quot;) as log:</span>
+<span class="c1">#         last_line = log.readlines()[-1]</span>
+<span class="c1">#</span>
+<span class="c1">#     if &quot;Normal termination&quot; in last_line:</span>
+<span class="c1">#         with open(n_log, &quot;r&quot;) as log:</span>
+<span class="c1">#             data = cclib.io.ccread(n_log)</span>
+<span class="c1">#             i = 0</span>
+<span class="c1">#             for line in log:</span>
+<span class="c1">#                 if &quot;Excited State&quot; in line:</span>
+<span class="c1">#                     val = line.split()[4:-1]</span>
+<span class="c1">#                     dft.append(dict({&quot;ev&quot;: float(val[0]),</span>
+<span class="c1">#                                      &quot;nm&quot;: float(val[2]),</span>
+<span class="c1">#                                      &quot;cm-1&quot;: float(data.etenergies[i]),</span>
+<span class="c1">#                                      &quot;f&quot;: float(val[-1].split(&quot;=&quot;)[1])}))</span>
+<span class="c1">#                     i += 1</span>
+<span class="c1">#</span>
+<span class="c1">#     delete_file(n_inp)</span>
 
     <span class="c1"># Create inp file for OPT</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">id_smiles</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_OPT.inp&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inp</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">n_opt</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inp</span><span class="p">:</span>
         <span class="n">inp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;%Chk=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">id_smiles</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">inp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;%NProcShared=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;nb_core_dft&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">inp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;%mem=1200MB</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -325,13 +384,13 @@
                                          <span class="s2">&quot;cm-1&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">etenergies</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span>
                                          <span class="s2">&quot;f&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])}))</span>
                         <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-
-    <span class="n">delete_file</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">id_smiles</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.chk&quot;</span><span class="p">)</span>
-
     <span class="n">compress_file</span><span class="p">(</span><span class="n">n_opt_log</span><span class="p">)</span>
     <span class="n">compress_file</span><span class="p">(</span><span class="n">n_td_log</span><span class="p">)</span>
 
+    <span class="n">delete_file</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">id_smiles</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.chk&quot;</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="n">dft</span></div>
+
 </pre></div>
 
            </div>
