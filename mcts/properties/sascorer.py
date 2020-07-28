@@ -26,10 +26,11 @@ from rdkit import Chem
 from rdkit.Chem import rdMolDescriptors
 from rdkit.six import iteritems
 
-if sys.version_info[0] == 3:
-    from rdkit.six.moves import pickle
-else:
-    from rdkit.six.moves import cPickle as pickle
+# if sys.version_info[0] == 3:
+#     from rdkit.six.moves import pickle
+# else:
+#     from rdkit.six.moves import cPickle as pickle
+import pickle
 
 _fscores = None
 
